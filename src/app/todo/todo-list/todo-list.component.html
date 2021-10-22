@@ -1,0 +1,6 @@
+<ul>
+  <li *ngFor="let todo of todos$ | async ">
+    <span>{{ todo.title }}</span>
+    <button (click)="handleRemoveTodo(todo.id)">X</button>
+  </li>
+</ul>
