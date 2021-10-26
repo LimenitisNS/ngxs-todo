@@ -1,4 +1,9 @@
 <div>
-  <input [(ngModel)]="itemTitle" />
+  <input [(ngModel)]="itemTitle" (input)="handleInputEvent($event)" />
   <button (click)="handleAddTodo()">Добавить</button>
+  <div>
+    <button (click)="handleFilterTodos(todoFilter.All)">Все</button>
+    <button (click)="handleFilterTodos(todoFilter.COMPLETE)">Выполненные</button>
+    <button (click)="handleFilterTodos(todoFilter.NOT_COMPLETE)">Не выполненные</button>
+  </div>
 </div>

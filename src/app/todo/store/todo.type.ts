@@ -1,4 +1,5 @@
 export type TodoType = {
   id: string,
-  title: string
+  title: string,
+  isChecked: boolean;
 }

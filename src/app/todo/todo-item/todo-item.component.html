@@ -1,1 +1,5 @@
-<p>todo-item works!</p>
+<li>
+  <input type="checkbox" [checked]="todo.isChecked" (change)="handleCheckTodo(todo.id)"/>
+  <span>{{ todo.title }}</span>
+  <button (click)="handleRemoveTodo(todo.id)">X</button>
+</li>
