@@ -5,6 +5,7 @@ import { NgxsModule } from "@ngxs/store";
 import { AppComponent } from './app.component';
 import {TodoModule} from "./todo/todo.module";
 import {TodoState} from "./todo/store/todo";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import {TodoState} from "./todo/store/todo";
   imports: [
     BrowserModule,
     TodoModule,
-    NgxsModule.forRoot([TodoState])
+    NgxsModule.forRoot([TodoState]),
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

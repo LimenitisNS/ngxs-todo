@@ -2,6 +2,9 @@ import {Action, Selector, State, StateContext} from "@ngxs/store";
 import {AddTodo, CheckTodo, FilterTodo, RemoveTodo, SearchTodo} from "./todo.action";
 import { TodoType } from "./todo.type";
 import { TodoFilter } from "./todoFilter.enum";
+import {TodoService} from "./todo.service";
+import {tap} from "rxjs/operators";
+import {Injectable} from "@angular/core";
 
 export class TodoStateModel {
   todos!: TodoType[];
@@ -17,7 +20,10 @@ export class TodoStateModel {
     filter: TodoFilter.All
   }
 })
+@Injectable()
 export class TodoState {
+  constructor(private todoService: TodoService) {}
+
   @Selector()
   static getTodos(state: TodoStateModel) {
     switch (state.filter) {
@@ -45,21 +51,21 @@ export class TodoState {
   }
 
   @Action(AddTodo)
-  add(context: StateContext<TodoStateModel>, action: AddTodo) {
+  async add(context: StateContext<TodoStateModel>, action: AddTodo) {
     const state = context.getState()
 
-    const newTodo: TodoType = {
-      id: Math.random().toString(36).substr(2),
-      title: action.payload,
-      isChecked: false
-    }
-
-    state.todos.push(newTodo)
-
     context.patchState({
-      todos: state.todos,
       search: ''
     })
+
+    this.todoService.addTodo(action.payload).pipe(tap((result) => {
+      console.log(result)
+      state.todos.push(result)
+
+      context.patchState({
+        todos: state.todos,
+      })
+    }))
   }
 
   @Action(RemoveTodo)
