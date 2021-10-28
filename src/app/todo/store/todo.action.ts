@@ -29,3 +29,7 @@ export class FilterTodo {
 
   constructor(public payload: TodoFilter) {}
 }
+
+export class getTodos {
+  static readonly type = '[Todo] Get'
+}

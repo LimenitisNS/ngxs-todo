@@ -1,9 +1,8 @@
 import {Action, Selector, State, StateContext} from "@ngxs/store";
-import {AddTodo, CheckTodo, FilterTodo, RemoveTodo, SearchTodo} from "./todo.action";
+import {AddTodo, CheckTodo, FilterTodo, RemoveTodo, SearchTodo, getTodos} from "./todo.action";
 import { TodoType } from "./todo.type";
 import { TodoFilter } from "./todoFilter.enum";
 import {TodoService} from "./todo.service";
-import {tap} from "rxjs/operators";
 import {Injectable} from "@angular/core";
 
 export class TodoStateModel {
@@ -50,6 +49,15 @@ export class TodoState {
     }
   }
 
+  @Action(getTodos)
+  async get(context: StateContext<TodoStateModel>) {
+    this.todoService.get().subscribe((result) => {
+      context.patchState({
+        todos: result,
+      })
+    })
+  }
+
   @Action(AddTodo)
   async add(context: StateContext<TodoStateModel>, action: AddTodo) {
     const state = context.getState()
@@ -58,22 +66,23 @@ export class TodoState {
       search: ''
     })
 
-    this.todoService.addTodo(action.payload).pipe(tap((result) => {
-      console.log(result)
+    this.todoService.add(action.payload).subscribe((result) => {
       state.todos.push(result)
 
       context.patchState({
         todos: state.todos,
       })
-    }))
+    })
   }
 
   @Action(RemoveTodo)
   remove(context: StateContext<TodoStateModel>, action: AddTodo) {
     const state = context.getState()
 
-    context.patchState({
-      todos: state.todos.filter(item => item.id !== action.payload)
+    this.todoService.remove(action.payload).subscribe(() => {
+      context.patchState({
+        todos: state.todos.filter(item => item.id !== action.payload)
+      })
     })
   }
 
@@ -88,16 +97,17 @@ export class TodoState {
   check(context: StateContext<TodoStateModel>, action: CheckTodo) {
     const state = context.getState()
 
-    state.todos.map(item => {
-      if(item.id === action.payload) {
-        item.isChecked = !item.isChecked
-      }
+    const index = state.todos.findIndex(item => item.id === action.payload)
+    const item = state.todos[index]
 
-      return item
-    })
+    this.todoService.checked(action.payload, !item.isChecked).subscribe((result) => {
+      console.log(result)
 
-    context.patchState({
-      todos: state.todos
+      state.todos[index] = result
+
+      context.patchState({
+        todos: state.todos
+      })
     })
   }
 
