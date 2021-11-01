@@ -24,27 +24,30 @@ export class TodoState {
   constructor(private todoService: TodoService) {}
 
   @Selector()
-  static getTodos(state: TodoStateModel) {
+  static getFilteredBySearchString(state: TodoStateModel){
+    return state.todos.filter(
+      item => item.title.toUpperCase().includes(state.search.toUpperCase())
+    )
+  }
+
+  @Selector([TodoState.getFilteredBySearchString])
+  static getTodos(state: TodoStateModel, filtered: TodoType[]) {
     switch (state.filter) {
       case TodoFilter.All: {
-        return state.todos.filter(
-          item => item.title.toUpperCase().includes(state.search.toUpperCase())
-        )
+        return filtered
       }
       case TodoFilter.COMPLETE: {
-        return state.todos.filter(
-          item => item.title.toUpperCase().includes(state.search.toUpperCase()) && item.isChecked
+        return filtered.filter(
+          item => item.isChecked
         )
       }
       case TodoFilter.NOT_COMPLETE: {
-        return state.todos.filter(
-          item => item.title.toUpperCase().includes(state.search.toUpperCase()) && !item.isChecked
+        return filtered.filter(
+          item => !item.isChecked
         )
       }
       default: {
-        return state.todos.filter(
-          item => item.title.toUpperCase().includes(state.search.toUpperCase())
-        )
+        return filtered
       }
     }
   }
