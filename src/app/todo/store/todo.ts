@@ -4,7 +4,6 @@ import { TodoType } from "./todo.type";
 import { TodoFilter } from "./todoFilter.enum";
 import {TodoService} from "./todo.service";
 import {Injectable} from "@angular/core";
-import {filter} from "rxjs/operators";
 
 export class TodoStateModel {
   todos!: TodoType[];
